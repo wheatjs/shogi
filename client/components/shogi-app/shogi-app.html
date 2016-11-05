@@ -1,0 +1,68 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/app-layout/app-layout.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/av-icons.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../shogi-menu/shogi-menu.html">
+<link rel="import" href="../shogi-play-menu/shogi-play-menu.html">
+
+<dom-module id="shogi-app">
+    <template>
+
+        <style>
+
+            [main-title] {
+                margin-left: 12px;
+            }
+
+            main {
+                height: 100%;
+            }
+
+            iron-pages {
+                height: 100%;
+            }
+
+        </style>
+
+        <app-location route="{{route}}"></app-location>
+        <app-route 
+            route="{{route}}"
+            pattern="/:page"
+            data="{{routeData}}"
+            tail="{{subRoute}}"></app-route>
+
+        <app-drawer-layout fullbleed force-narrow draggable>
+            <app-drawer slot="drawer">
+                
+            </app-drawer>
+
+            <app-header-layout has-scrolling-region>
+                <app-header slot="header" fixed>
+                    <app-toolbar>
+                        <paper-icon-button drawer-toggle icon="menu"></paper-icon-button>
+                        <span main-title>Shogi</span>
+
+                        <paper-icon-button icon="av:volume-up"></paper-icon-button>
+                        <paper-icon-button icon="settings"></paper-icon-button>
+                        <paper-icon-button icon="help"></paper-icon-button>
+                    </app-toolbar>
+                </app-header>
+
+                <iron-pages selected="[[page]]" attr-for-selected="name" selected-attribute="active" fallback-selection="menu">
+                    <shogi-menu name="menu"></shogi-menu>
+                    <shogi-play-menu name="play"></shogi-play-menu>
+                </iron-pages>
+                    
+            </app-header-layout>
+        </app-drawer-layout>
+
+    </template>
+    <script src="shogi-app.js"></script>
+</dom-module>

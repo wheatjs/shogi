@@ -1,0 +1,55 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/app-layout/app-layout.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/scale-down-animation.html">
+<link rel="import" href="../shogi-board/shogi-board.html">
+
+<dom-module id="shogi-menu">
+    <template>
+        <style>
+            :host {
+                position: relative;
+                min-height: 100%;
+
+                @apply --layout-vertical;
+                @apply --layout-center-center;
+            }
+
+            a {
+                color: inherit;
+                text-decoration: none;
+                font-size: 2em;
+                font-weight: 100;
+                padding-top: .3em;
+                padding-bottom: .3em;
+                transition: all .2s cubic-bezier(0.165, 0.84, 0.44, 1);
+            }
+
+            a[inactive] {
+                transform: translateY(400%) scale(0);
+                opacity: 0;
+            }
+
+            a:hover, a:focus {
+                color: #F44336;
+                transform: scale(1.1);
+                outline: none;
+            }
+        </style>
+
+        <a inactive href="/play">Play Shogi</a>
+        <a inactive href="/learn">Learn How To Play</a>
+        <a inactive href="#settings">Settings</a>
+        <a inactive href="/rules">Rules</a>
+    </template>
+    <script src="shogi-menu.js"></script>
+</dom-module>
