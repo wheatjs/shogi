@@ -1,16 +1,58 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../shogi-piece/shogi-piece.html">
 
 <dom-module id="shogi-board">
     <template>
         <style>
+            :host * {
+                box-sizing: border-box;
+            }
+
             :host {
                 display: block;
                 height: 100%;
                 width: 100%;
+
+                @apply --layout-horizontal;
+                @apply --layout-center-ccenter;
             }
+
+            #board {
+                width: 700px;
+                height: 700px;
+                margin: auto;
+                border: 1px solid black;
+
+                @apply --layout-vertical;
+            }
+
+            [row] {
+                position: relative;
+                @apply --layout-flex;
+                @apply --layout-horizontal;
+            }
+
+            [column] {
+                position: relative;
+                height: 100%;
+                border: 1px solid black;
+                @apply --layout-flex;
+                @apply --layout-vertical;
+                @apply --layout-center-center;
+            }
+
+            [column]:hover {
+                background: rgba(0, 0, 0, .10);
+            }
+
+            [marker]::after { content: ''; position: absolute; width: 10px; height: 10px; border-radius: 50%; background: black; z-index: 500;  }
+            [marker-top-left]::after {  top: 0; left: 0; transform: translate(-50%, -50%);  }
+            [marker-top-right]::after  { top: 0; right: 0; transform: translate(50%, -50%); }
+            [marker-bottom-left]::after  {  bottom: 0; left: 0; transform: translate(-50%, 50%); }
+            [marker-bottom-right]::after  {  bottom: 0; right: 0; transform: translate(50%, 50%); }
         </style>
 
-        <span>Shogi Board HEre</span>
+        <div id="board"></div>
 
     </template>
     <script src="shogi-board.js"></script>

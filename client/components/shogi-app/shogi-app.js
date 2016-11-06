@@ -15,18 +15,13 @@ class ShogiApp extends Polymer.Element {
             },
 
             observers: [
-                'pageChagned(page)',
                 'routeChanged(routeData.page)'
             ]
         }
     }
 
-    pageChagned(page) {
-        this.page = page || 'menu';
-    }
-
     routeChanged(route) {
-        this.page = route || 'menu';
+        this.page = this.route.path || '/';
     }
 
 }

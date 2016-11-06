@@ -56,8 +56,9 @@
                 </app-header>
 
                 <iron-pages selected="[[page]]" attr-for-selected="name" selected-attribute="active" fallback-selection="menu">
-                    <shogi-menu name="menu"></shogi-menu>
-                    <shogi-play-menu name="play"></shogi-play-menu>
+                    <shogi-menu name="/"></shogi-menu>
+                    <shogi-play-menu name="/play"></shogi-play-menu>
+                    <shogi-board name="/play/local"></shogi-board>
                 </iron-pages>
                     
             </app-header-layout>
