@@ -23,15 +23,15 @@
                 width: 100%;
 
                 @apply --layout-horizontal;
-                @apply --layout-center-ccenter;
+                @apply --layout-center-center;
             }
 
             #board {
                 width: 700px;
                 height: 700px;
-                margin: auto;
-                border: 1px solid black;
-
+                border: 2px solid black;
+                border-radius: 0 10px 0 10px;
+                overflow: hidden;
                 @apply --layout-vertical;
             }
 
@@ -66,6 +66,28 @@
                 top: 0; left: 0; right: 0; bottom: 0;
             }
 
+            .right-koma {
+                width: 350px;
+                height: 350px;
+                border: 3px solid black;
+                border-left: none;
+                border-radius: 0 25px 25px 0;
+                @apply --layout-self-end;
+            }
+
+            .left-koma {
+                width: 350px;
+                height: 350px;
+                border: 3px solid black;
+                border-right: none;
+                border-radius: 25px 0 0 25px;
+                @apply --layout-self-start;
+            }
+
+            .board-container {
+                @apply --layout-horizontal;
+            }
+
             [marker]::after { content: ''; position: absolute; width: 10px; height: 10px; border-radius: 50%; background: black; z-index: 500;  }
             [marker-top-left]::after {  top: 0; left: 0; transform: translate(-50%, -50%);  }
             [marker-top-right]::after  { top: 0; right: 0; transform: translate(50%, -50%); }
@@ -73,7 +95,11 @@
             [marker-bottom-right]::after  {  bottom: 0; right: 0; transform: translate(50%, 50%); }
         </style>
 
-        <div id="board"></div>
+        <div class="board-container">
+            <div class="left-koma"></div>
+            <div id="board"></div>
+            <div class="right-koma"></div>
+        </div>
 
     </template>
     <script src="shogi-board.js"></script>

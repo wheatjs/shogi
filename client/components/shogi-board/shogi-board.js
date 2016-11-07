@@ -29,8 +29,8 @@
 
                 // Board Charcater Map            
                 charcater: {
-                    1: { tag: 'shogi-king-general', side: 'black' },
-                    2: { tag: 'shogi-jeweled-general', side: 'white' },
+                    1: { tag: 'shogi-jeweled-general', side: 'black' },
+                    2: { tag: 'shogi-king-general', side: 'white' },
                     3: { tag: 'shogi-pawn', side: 'black' },
                     4: { tag: 'shogi-pawn', side: 'white' },
                     5: { tag: 'shogi-knight', side: 'black' },
@@ -44,7 +44,7 @@
                     13: { tag: 'shogi-rook', side: 'black' },
                     14: { tag: 'shogi-rook', side: 'white' },
                     15: { tag: 'shogi-lance', side: 'black' },
-                    16: { tag: 'shogi-lance', side: 'white' },
+                    16: { tag: 'shogi-lance', side: 'white' }
                 },
 
                 whitePieces: [2, 4, 6, 8, 10, 12, 14, 16],
@@ -68,6 +68,7 @@
             super.connectedCallback();
 
             this.board = this.$.board;
+            this.placeSound = new Audio('/assets/audio/shogi-piece.mp3');
             this.drawBoard();
         }
 
@@ -177,6 +178,7 @@
             this.vboard.layout[targetY][targetX] = this.vboard.layout[currentY][currentX];
             this.vboard.layout[currentY][currentX] = 0;
 
+            this.placeSound.play();            
             this.drawPieces();
         }
         
