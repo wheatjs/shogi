@@ -31,24 +31,42 @@
                 charcater: {
                     1: { tag: 'shogi-jeweled-general', side: 'black' },
                     2: { tag: 'shogi-king-general', side: 'white' },
-                    3: { tag: 'shogi-pawn', side: 'black' },
-                    4: { tag: 'shogi-pawn', side: 'white' },
-                    5: { tag: 'shogi-knight', side: 'black' },
-                    6: { tag: 'shogi-knight', side: 'white' },
-                    7: { tag: 'shogi-bishop', side: 'black' },
-                    8: { tag: 'shogi-bishop', side: 'white' },
-                    9: { tag: 'shogi-gold-general', side: 'black' },
-                    10: { tag: 'shogi-gold-general', side: 'white' },
-                    11: { tag: 'shogi-silver-general', side: 'black' },
-                    12: { tag: 'shogi-silver-general', side: 'white' },
-                    13: { tag: 'shogi-rook', side: 'black' },
-                    14: { tag: 'shogi-rook', side: 'white' },
-                    15: { tag: 'shogi-lance', side: 'black' },
-                    16: { tag: 'shogi-lance', side: 'white' }
+                    3: { tag: 'shogi-pawn', side: 'black', promotion: 30 },
+                    4: { tag: 'shogi-pawn', side: 'white', promotion: 29 },
+                    5: { tag: 'shogi-knight', side: 'black', promotion: 26 },
+                    6: { tag: 'shogi-knight', side: 'white', promotion: 25 },
+                    7: { tag: 'shogi-bishop', side: 'black', promotion: 20 },
+                    8: { tag: 'shogi-bishop', side: 'white', promotion: 19 },
+                    9: { tag: 'shogi-gold-general', side: 'black', promotion: 22 },
+                    10: { tag: 'shogi-gold-general', side: 'white', promotion: 21 },
+                    11: { tag: 'shogi-silver-general', side: 'black', promotion: 24 },
+                    12: { tag: 'shogi-silver-general', side: 'white', promotion: 23 },
+                    13: { tag: 'shogi-rook', side: 'black', promotion: 18 },
+                    14: { tag: 'shogi-rook', side: 'white', promotion: 17 },
+                    15: { tag: 'shogi-lance', side: 'black', promotion: 28 },
+                    16: { tag: 'shogi-lance', side: 'white', promotion: 27 },
+
+                    17: { tag: 'shogi-promoted-rook', side: 'white' },
+                    18: { tag: 'shogi-promoted-rook', side: 'black' },
+                    19: { tag: 'shogi-promoted-bishop', side: 'white' },
+                    20: { tag: 'shogi-promoted-bishop', side: 'black' },
+                    21: { tag: 'shogi-promoted-gold-general', side: 'white' },
+                    22: { tag: 'shogi-promoted-gold-general', side: 'black' },
+                    23: { tag: 'shogi-promoted-silver-general', side: 'white' },
+                    24: { tag: 'shogi-promoted-silver-general', side: 'black' },
+                    25: { tag: 'shogi-promoted-knight', side: 'white' },
+                    26: { tag: 'shogi-promoted-knight', side: 'black' },
+                    27: { tag: 'shogi-promoted-lance', side: 'white' },
+                    28: { tag: 'shogi-promoted-lance', side: 'black' },
+                    29: { tag: 'shogi-promoted-pawn', side: 'white' },
+                    30: { tag: 'shogi-promoted-pawn', side: 'black' }
                 },
 
-                whitePieces: [2, 4, 6, 8, 10, 12, 14, 16],
-                blackPieces: [1, 3, 5, 7, 9, 11, 13, 15],
+                whitePieces: [2, 4, 6, 8, 10, 12, 14, 16, 17, 19, 21, 23, 25, 27, 29],
+                blackPieces: [1, 3, 5, 7, 9, 11, 13, 15, 18, 20, 22, 24, 26, 28, 30],
+
+                whitePromotion: [8, 7, 6],
+                blackPromotion: [0, 1, 2],
 
                 attributes: [
                     { y: 3, x: 3, attributes: ['marker-top-left', 'marker'] },
@@ -96,7 +114,7 @@
             for (let y = 0; y < this.vboard.layout.length; y++) {
                 for (let x = 0; x < this.vboard.layout[y].length; x++) {
                     if (this.vboard.layout[y][x] !== 0) {
-                        let piece = this.vboard.charcater[this.vboard.layout[y][x]];                    
+                        let piece = this.vboard.charcater[this.vboard.layout[y][x]];
                         let physicalPiece = BoardHelper.CreateElementWithAttributes(piece.tag, [{ side: piece.side }, { x: x }, { y: y }]);
 
                         // Add Event Listener                        
@@ -167,7 +185,7 @@
         }
 
         onSquareSelected(e, currentPiece) {
-            this.clearHighlightsFromBoard();
+            this.clearHighlightsFromBoard(); 
 
             let targetY = parseInt(e.target.parentNode.getAttribute('y'));
             let targetX = parseInt(e.target.parentNode.getAttribute('x'));
@@ -175,7 +193,23 @@
             let currentY = parseInt(currentPiece.getAttribute('y'));            
             let currentX = parseInt(currentPiece.getAttribute('x'));
 
-            this.vboard.layout[targetY][targetX] = this.vboard.layout[currentY][currentX];
+            // Determine if should promote.
+            
+            let piece = this.vboard.layout[currentY][currentX];
+
+            if (BoardHelper.IsBlackPiece(this.vboard.layout[currentY][currentX], this.vboard) && this.vboard.charcater[piece].hasOwnProperty('promotion')) {
+                if (this.vboard.blackPromotion.indexOf(targetY) > -1) {
+                    piece = this.vboard.charcater[piece].promotion;
+                }
+            }
+            
+            if (BoardHelper.IsWhitePiece(this.vboard.layout[currentY][currentX], this.vboard) && this.vboard.charcater[piece].hasOwnProperty('promotion')) {
+                if (this.vboard.whitePromotion.indexOf(targetY) > -1) {
+                    piece = this.vboard.charcater[piece].promotion;
+                }
+            }
+
+            this.vboard.layout[targetY][targetX] = piece;
             this.vboard.layout[currentY][currentX] = 0;
 
             this.placeSound.play();            
