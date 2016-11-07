@@ -31,6 +31,7 @@
     "iron-resizable-behavior": "PolymerElements/iron-resizable-behavior#2.0-preview",
     "lazy-imports": "mixin",
     "iron-pages": "PolymerElements/iron-pages#2.0-preview",
-    "app-route": "PolymerElements/app-route#2.0-preview"
+    "app-route": "PolymerElements/app-route#2.0-preview",
+    "animate.css": "^3.5.2"
   }
 }

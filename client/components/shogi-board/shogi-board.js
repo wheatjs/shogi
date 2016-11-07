@@ -102,6 +102,14 @@
                 }
             }
 
+            let attributes = this.vboard.attributes;            
+            
+            for (let i = 0; i < attributes.length; i++) {
+                for (let z = 0; z < attributes[i].attributes.length; z++) {
+                    BoardHelper.GetColumn(attributes[i].y, attributes[i].x, this.board).setAttribute(attributes[i].attributes[z], '');
+                }
+            }
+
             this.drawPieces();
         }
 
@@ -193,27 +201,45 @@
             let currentY = parseInt(currentPiece.getAttribute('y'));            
             let currentX = parseInt(currentPiece.getAttribute('x'));
 
-            // Determine if should promote.
-            
-            let piece = this.vboard.layout[currentY][currentX];
 
-            if (BoardHelper.IsBlackPiece(this.vboard.layout[currentY][currentX], this.vboard) && this.vboard.charcater[piece].hasOwnProperty('promotion')) {
-                if (this.vboard.blackPromotion.indexOf(targetY) > -1) {
+            // Determine if should promote or if game is won.
+                        
+            let blackWin = false;
+            let whiteWin = false;
+
+            let piece = this.vboard.layout[currentY][currentX];
+            let targetPiece = this.vboard.layout[targetY][targetX];
+
+            if (BoardHelper.IsBlackPiece(piece, this.vboard)) {
+                if (this.vboard.charcater[piece].hasOwnProperty('promotion') && this.vboard.blackPromotion.indexOf(targetY) > -1)
                     piece = this.vboard.charcater[piece].promotion;
-                }
+                
+                blackWin = targetPiece === 2;
             }
             
-            if (BoardHelper.IsWhitePiece(this.vboard.layout[currentY][currentX], this.vboard) && this.vboard.charcater[piece].hasOwnProperty('promotion')) {
-                if (this.vboard.whitePromotion.indexOf(targetY) > -1) {
+            if (BoardHelper.IsWhitePiece(piece, this.vboard)) {
+                if (this.vboard.charcater[piece].hasOwnProperty('promotion') && this.vboard.whitePromotion.indexOf(targetY) > -1)
                     piece = this.vboard.charcater[piece].promotion;
-                }
+                
+                whiteWin = targetPiece === 1;
             }
 
             this.vboard.layout[targetY][targetX] = piece;
             this.vboard.layout[currentY][currentX] = 0;
 
-            this.placeSound.play();            
+            this.placeSound.play();
             this.drawPieces();
+
+            if (blackWin) this.gameWon('Black');
+            if (whiteWin) this.gameWon('White');
+        }
+
+        gameWon(side) {
+            let winScreen = BoardHelper.CreateElementWithAttributes('div', ['overlay']);
+            winScreen.className = 'animated flipInY';
+            winScreen.innerText = side + ' Wins!';
+            
+            this.board.appendChild(winScreen);
         }
         
     }

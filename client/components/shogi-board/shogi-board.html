@@ -10,10 +10,11 @@
 <link rel="import" href="../shogi-pieces/shogi-jeweled-general.html">
 <link rel="import" href="../shogi-pieces/shogi-rook.html">
 <link rel="import" href="../shogi-pieces/shogi-promoted-rook.html">
+<link rel="import" href="../animated-css.html">
 
 <dom-module id="shogi-board">
     <template>
-        <style>
+        <style include="animate-css">
             :host * {
                 box-sizing: border-box;
             }
@@ -33,10 +34,11 @@
                 border: 2px solid black;
                 border-radius: 0 10px 0 10px;
                 overflow: hidden;
+                position: relative;
                 @apply --layout-vertical;
             }
 
-            [row] {
+            :host [row] {
                 position: relative;
                 @apply --layout-flex;
                 @apply --layout-horizontal;
@@ -68,20 +70,20 @@
             }
 
             .right-koma {
-                width: 350px;
-                height: 350px;
+                width: 250px;
+                height: 250px;
                 border: 3px solid black;
                 border-left: none;
-                border-radius: 0 25px 25px 0;
+                border-radius: 0 50% 50% 0;
                 @apply --layout-self-end;
             }
 
             .left-koma {
-                width: 350px;
-                height: 350px;
+                width: 250px;
+                height: 250px;
                 border: 3px solid black;
                 border-right: none;
-                border-radius: 25px 0 0 25px;
+                border-radius: 50% 0 0 50%;
                 @apply --layout-self-start;
             }
 
@@ -89,11 +91,24 @@
                 @apply --layout-horizontal;
             }
 
+            [overlay] {
+                position: absolute;
+                top: 0; bottom: 0; left: 0; right: 0;
+                background: rgba(0, 0, 0, .7);
+                z-index: 500000;
+
+                color: white;
+                font-size: 48px;
+
+                @apply --layout-horizontal;
+                @apply --layout-center-center;
+            }
+
             [marker]::after { content: ''; position: absolute; width: 10px; height: 10px; border-radius: 50%; background: black; z-index: 500;  }
             [marker-top-left]::after {  top: 0; left: 0; transform: translate(-50%, -50%);  }
             [marker-top-right]::after  { top: 0; right: 0; transform: translate(50%, -50%); }
             [marker-bottom-left]::after  {  bottom: 0; left: 0; transform: translate(-50%, 50%); }
-            [marker-bottom-right]::after  {  bottom: 0; right: 0; transform: translate(50%, 50%); }
+            [marker-bottom-right]::after  {  bottom: 0; right: 0; transform: translate(50%, 50%); } 
         </style>
 
         <div class="board-container">
