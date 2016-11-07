@@ -1,0 +1,238 @@
+<link rel="import" href="../shogi-piece/shogi-piece.html">
+
+<dom-module id="shogi-knight">
+    <script>
+        (function() {
+            'use strict';
+
+            class ShogiBishop extends ShogiPiece {
+
+                static get is() { return 'shogi-bishop'; }
+                static get config() {
+                    return {
+                        properties: {
+                            kanji: { value: '角行' },
+                            romaji: { value: 'Kakugyō' },
+                            english: { value: 'Bishop' },
+                            side: { type: String }
+                        }
+                    }
+                }
+
+                constructor() {
+                    super();
+                }
+
+                connectedCallback() {
+                    super.connectedCallback();
+                    this.setAttribute('title', `${this.english} | ${this.kanji} | ${this.romaji}`);
+                }
+
+                /**
+                 * {#, |, |, |, |, |, |, |, #}
+                 * {|, #, |, |, |, |, |, #, |}
+                 * {|, |, #, |, |, |, #, |, |}
+                 * {|, |, |, #, |, #, |, |, |}
+                 * {|, |, |, |, X, |, |, |, |}
+                 * {|, |, |, #, |, #, |, |, |}
+                 * {|, |, #, |, |, |, #, |, |}
+                 * {|, #, |, |, |, |, |, #, |}
+                 * {#, |, |, |, |, |, |, |, #}
+                 */
+                theoreticalMoves(y, x) {
+                    var possible = [];
+                    var possibleFiltered = [];
+
+                    // To Bottom Left
+                    let xc = x, yc = y;
+                    for (var i = 0; i < 8; i++)  possible.push({ y: yc++, x: xc-- });
+
+                    // To Top Left
+                    xc = x, yc = y;
+                    for (var i = 0; i < 8; i++) possible.push({ y: yc--, x: xc-- });
+
+                    // To Bottom Left
+                    xc = x, yc = y;
+                    for (var i = 0; i < 8; i++) possible.push({ y: yc++, x: xc++ });
+
+                    // To Top Right
+                    xc = x, yc = y;
+                    for (var i = 0; i < 8; i++) possible.push({ y: yc--, x: xc++ });
+
+                    // Filter out all invalid moves.
+                    for(let move of possible) {
+                        if(move.x >= 0 && move.y >= 0 && move.x < 9 && move.y < 9 && move.x !== x && move.y !== y)
+                            possibleFiltered.push(move);
+                    }
+
+                    return possibleFiltered;
+                }
+
+                possibleMoves(y, x, vboard) {
+                    let moves = this.theoreticalMoves(y, x);
+                    let filteredMoves = [];
+            
+                    let NEBlocked = false;
+                    let NWBlocked = false;
+                    let SEBlocked = false;
+                    let SWBlocked = false;
+
+                    for(let move of moves) {
+                        let piece = vboard.layout[move.y][move.x];
+
+                        // Check for black piece.
+                        if(this.side === 'black') {
+
+                            // Find Closest North/East Block Piece
+                            if(move.x > x && move.y < y && !NEBlocked) {
+                                let canAdd = true;
+                                
+                                if(BoardHelper.IsBlackPiece(piece, vboard)) {
+                                    NEBlocked = true;
+                                    canAdd = false;
+                                }
+
+                                if(BoardHelper.IsWhitePiece(piece, vboard)) {
+                                    NEBlocked = true;
+                                }
+
+                                if(canAdd)
+                                    filteredMoves.push(move);
+                            }
+
+                            // Find Closest North/West Block Piece
+                            if(move.x < x && move.y < y && !NWBlocked) {
+                                let canAdd = true;
+
+                                if(BoardHelper.IsBlackPiece(piece, vboard)) {
+                                    NWBlocked = true;
+                                    canAdd = false;
+                                }
+
+                                if(BoardHelper.IsWhitePiece(piece, vboard)) {
+                                    NWBlocked = true;
+                                }
+
+                                if(canAdd)
+                                    filteredMoves.push(move);
+                            }
+
+                            // Find Closest South/East Block Piece
+                            if(move.x > x && move.y > y && !SEBlocked) {
+                                let canAdd = true;
+
+                                if(BoardHelper.IsBlackPiece(piece, vboard)) {
+                                    SEBlocked = true;
+                                    canAdd = false;
+                                }
+
+                                if(BoardHelper.IsWhitePiece(piece, vboard)) {
+                                    SEBlocked = true;
+                                }
+
+                                if(canAdd)
+                                    filteredMoves.push(move);
+                            }
+
+                            // Find Closest South/East Block Piece
+                            if(move.x < x && move.y > y && !SWBlocked) {
+                                let canAdd = true;
+
+                                if(BoardHelper.IsBlackPiece(piece, vboard)) {
+                                    SWBlocked = true;
+                                    canAdd = false;
+                                }
+
+                                if(BoardHelper.IsWhitePiece(piece, vboard)) {
+                                    SWBlocked = true;
+                                }
+
+                                if(canAdd)
+                                    filteredMoves.push(move);
+                            }
+
+                        }
+
+
+                        // Check for white piece.
+                        if(this.side === 'white') {
+                                                // Find Closest North/East Block Piece
+                            if(move.x > x && move.y < y && !NEBlocked) {
+                                let canAdd = true;
+                                
+                                if(BoardHelper.IsWhitePiece(piece, vboard)) {
+                                    NEBlocked = true;
+                                    canAdd = false;
+                                }
+
+                                if(BoardHelper.IsBlackPiece(piece, vboard)) {
+                                    NEBlocked = true;
+                                }
+
+                                if(canAdd)
+                                    filteredMoves.push(move);
+                            }
+
+                            // Find Closest North/West Block Piece
+                            if(move.x < x && move.y < y && !NWBlocked) {
+                                let canAdd = true;
+
+                                if(BoardHelper.IsWhitePiece(piece, vboard)) {
+                                    NWBlocked = true;
+                                    canAdd = false;
+                                }
+
+                                if(BoardHelper.IsBlackPiece(piece, vboard)) {
+                                    NWBlocked = true;
+                                }
+
+                                if(canAdd)
+                                    filteredMoves.push(move);
+                            }
+
+                            // Find Closest South/East Block Piece
+                            if(move.x > x && move.y > y && !SEBlocked) {
+                                let canAdd = true;
+
+                                if(BoardHelper.IsWhitePiece(piece, vboard)) {
+                                    SEBlocked = true;
+                                    canAdd = false;
+                                }
+
+                                if(BoardHelper.IsBlackPiece(piece, vboard)) {
+                                    SEBlocked = true;
+                                }
+
+                                if(canAdd)
+                                    filteredMoves.push(move);
+                            }
+
+                            // Find Closest South/East Block Piece
+                            if(move.x < x && move.y > y && !SWBlocked) {
+                                let canAdd = true;
+
+                                if(BoardHelper.IsWhitePiece(piece, vboard)) {
+                                    SWBlocked = true;
+                                    canAdd = false;
+                                }
+
+                                if(BoardHelper.IsBlackPiece(piece, vboard)) {
+                                    SWBlocked = true;
+                                }
+
+                                if(canAdd)
+                                    filteredMoves.push(move);
+                            }
+                        }
+
+                    }
+
+                    return filteredMoves;
+                }
+
+            }
+
+            customElements.define(ShogiBishop.is, ShogiBishop);
+        })();
+    </script>
+</dom-module>

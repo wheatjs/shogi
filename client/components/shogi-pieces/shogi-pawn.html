@@ -1,0 +1,90 @@
+<link rel="import" href="../shogi-piece/shogi-piece.html">
+
+<dom-module id="shogi-knight">
+    <script>
+        (function() {
+            'use strict';
+
+            class ShogiPawn extends ShogiPiece {
+
+                static get is() { return 'shogi-pawn'; }
+                static get config() {
+                    return {
+                        properties: {
+                            kanji: { value: '歩兵' },
+                            romaji: { value: 'Fuhyō' },
+                            english: { value: 'Pawn' },
+                            side: { type: String }
+                        }
+                    }
+                }
+
+                constructor() {
+                    super();
+                }
+
+                connectedCallback() {
+                    super.connectedCallback();
+                    this.setAttribute('title', `${this.english} | ${this.kanji} | ${this.romaji}`);
+                }
+
+                /**
+                 * {|, |, |, |, |, |, |, |, |}
+                 * {|, |, |, |, |, |, |, |, |}
+                 * {|, |, |, |, |, |, |, |, |}
+                 * {|, |, |, |, #, |, |, |, |}
+                 * {|, |, |, |, X, |, |, |, |}
+                 * {|, |, |, |, |, |, |, |, |}
+                 * {|, |, |, |, |, |, |, |, |}
+                 * {|, |, |, |, |, |, |, |, |}
+                 * {|, |, |, |, |, |, |, |, |}
+                 */
+                theoreticalMoves(y, x) {
+                    
+                    let possible = [];
+                    let possibleFiltered = [];
+
+                    if (this.side === 'black') {
+                        possible = [
+                            { y: y - 1, x: x },
+                        ];
+                    }
+
+                    if (this.side === 'white') {
+                        possible = [
+                            { y: y + 1, x: x },
+                        ];
+                    }
+
+                    // Filter out all invalid moves.
+                    for(let move of possible) {
+                        if(move.x >= 0 && move.y >= 0 && move.x < 9 && move.y < 9 && move.y !== y)
+                            possibleFiltered.push(move);
+                    }
+
+                    return possibleFiltered;
+
+                }
+
+                possibleMoves(y, x, vboard) {
+                    let moves = this.theoreticalMoves(y, x);
+                    
+                    for(let move of moves) {
+                        let piece = vboard.layout[move.y][move.x];
+                        
+                        if(this.side === 'white' && BoardHelper.IsWhitePiece(piece, vboard))
+                            moves.splice(moves.indexOf(move), 1);
+
+                        if(this.side === 'black' && BoardHelper.IsBlackPiece(piece, vboard))
+                            moves.splice(moves.indexOf(move), 1);
+                    }
+
+                    return moves;
+                }
+
+            }
+
+            customElements.define(ShogiPawn.is, ShogiPawn);
+        })();
+    </script>
+</dom-module>

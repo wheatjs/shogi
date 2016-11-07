@@ -1,5 +1,14 @@
-<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../shogi-piece/shogi-piece.html">
+<link rel="import" href="../shogi-pieces/shogi-knight.html">
+<link rel="import" href="../shogi-pieces/shogi-pawn.html">
+<link rel="import" href="../shogi-pieces/shogi-bishop.html">
+<link rel="import" href="../shogi-pieces/shogi-lance.html">
+<link rel="import" href="../shogi-pieces/shogi-silver-general.html">
+<link rel="import" href="../shogi-pieces/shogi-gold-general.html">
+<link rel="import" href="../shogi-pieces/shogi-king-general.html">
+<link rel="import" href="../shogi-pieces/shogi-jeweled-general.html">
+<link rel="import" href="../shogi-pieces/shogi-rook.html">
 
 <dom-module id="shogi-board">
     <template>
@@ -41,8 +50,20 @@
                 @apply --layout-center-center;
             }
 
+
             [column]:hover {
                 background: rgba(0, 0, 0, .10);
+            }
+
+            [highlight] {
+                background: rgba(0, 0, 0, .2) !important;
+            }
+
+            [target] {
+                background: rgba(0, 0, 0, 0);
+                z-index: 5000;
+                position: absolute;
+                top: 0; left: 0; right: 0; bottom: 0;
             }
 
             [marker]::after { content: ''; position: absolute; width: 10px; height: 10px; border-radius: 50%; background: black; z-index: 500;  }

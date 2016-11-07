@@ -1,0 +1,90 @@
+<link rel="import" href="../shogi-piece/shogi-piece.html">
+
+<dom-module id="shogi-knight">
+    <script>
+        (function() {
+            'use strict';
+
+            class ShogiKnight extends ShogiPiece {
+
+                static get is() { return 'shogi-knight'; }
+                static get config() {
+                    return {
+                        properties: {
+                            kanji: { value: '桂馬' },
+                            romaji: { value: 'Keima' },
+                            english: { value: 'Knight' },
+                            side: { type: String }
+                        }
+                    }
+                }
+
+                constructor() {
+                    super();
+                }
+
+                connectedCallback() {
+                    super.connectedCallback();
+                    this.setAttribute('title', `${this.english} | ${this.kanji} | ${this.romaji}`);
+                }
+
+                /**
+                 * {|, |, |, |, |, |, |, |, |}
+                 * {|, |, |, |, |, |, |, |, |}
+                 * {|, |, |, #, |, #, |, |, |}
+                 * {|, |, |, |, |, |, |, |, |}
+                 * {|, |, |, |, X, |, |, |, |}
+                 * {|, |, |, |, |, |, |, |, |}
+                 * {|, |, |, |, |, |, |, |, |}
+                 * {|, |, |, |, |, |, |, |, |}
+                 * {|, |, |, |, |, |, |, |, |}
+                 */
+                theoreticalMoves(y, x) {
+                    let possible = [];
+                    let possibleFiltered = [];
+
+                    if (this.side === 'black') {
+                        possible = [
+                            { y: y - 2, x: x - 1 },
+                            { y: y - 2, x: x + 1 }
+                        ];
+                    }
+
+                    if (this.side === 'white') {
+                        possible = [
+                            { y: y + 2, x: x - 1 },
+                            { y: y + 2, x: x + 1 }
+                        ];
+                    }
+
+                    // Filter out all invalid moves.
+                    for(let move of possible) {
+                        if(move.x >= 0 && move.y >= 0 && move.x < 9 && move.y < 9 && move.y !== y)
+                            possibleFiltered.push(move);
+                    }
+
+                    return possibleFiltered;
+                }
+
+                possibleMoves(y, x, vboard) {
+                    let moves = this.theoreticalMoves(y, x);
+                    
+                    for(let move of this.theoreticalMoves(y, x)) {
+                        let piece = vboard.layout[move.y][move.x];
+                        
+                        if(this.side === 'white' && BoardHelper.IsWhitePiece(piece, vboard))
+                            moves.splice(moves.indexOf(move), 1);
+
+                        if(this.side === 'black' && BoardHelper.IsBlackPiece(piece, vboard))
+                            moves.splice(moves.indexOf(move), 1);
+                    }
+
+                    return moves;
+                }
+
+            }
+
+            customElements.define(ShogiKnight.is, ShogiKnight);
+        })();
+    </script>
+</dom-module>

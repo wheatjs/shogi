@@ -1,5 +1,3 @@
-'use strict';
-
 class ShogiPlayMenu extends Polymer.Element {
 
     static get is() { return "shogi-play-menu"; }

@@ -1,0 +1,205 @@
+<link rel="import" href="../shogi-piece/shogi-piece.html">
+
+<dom-module id="shogi-rook">
+    <script>
+        (function(){
+            'use strict';
+
+            class ShogiRook extends ShogiPiece {
+
+                static get is() { return 'shogi-rook'; }
+                static get config() {
+                    return {
+                        properties: {
+                            kanji: { value: '飛車' },
+                            romaji: { value: 'Hisha' },
+                            english: { value: 'Rook' },
+                            side: { type: String }
+                        }
+                    }
+                }
+
+                constructor() {
+                    super();
+                }
+
+                connectedCallback() {
+                    super.connectedCallback();
+                    this.setAttribute('title', `${this.english} | ${this.kanji} | ${this.romaji}`);
+                }
+
+                /**
+                 * {#, |, |, |, |, |, |, |, #}
+                 * {|, #, |, |, |, |, |, #, |}
+                 * {|, |, #, |, |, |, #, |, |}
+                 * {|, |, |, #, |, #, |, |, |}
+                 * {|, |, |, |, X, |, |, |, |}
+                 * {|, |, |, #, |, #, |, |, |}
+                 * {|, |, #, |, |, |, #, |, |}
+                 * {|, #, |, |, |, |, |, #, |}
+                 * {#, |, |, |, |, |, |, |, #}
+                 */
+                theoreticalMoves(y, x) {
+                    var possible = [];
+                    var possibleFiltered = [];
+
+                    // To Top
+                    let xc = x, yc = y;
+                    for (var i = 0; i < 8; i++)  possible.push({ y: yc++, x: xc });
+
+                    // To Bottom
+                    xc = x, yc = y;
+                    for (var i = 0; i < 8; i++) possible.push({ y: yc--, x: xc });
+
+                    // To Left
+                    xc = x, yc = y;
+                    for (var i = 0; i < 8; i++) possible.push({ y: yc, x: xc++ });
+
+                    // To Right
+                    xc = x, yc = y;
+                    for (var i = 0; i < 8; i++) possible.push({ y: yc, x: xc-- });
+
+                    // Filter out all invalid moves.
+                    for(let move of possible) {
+                        if(move.x >= 0 && move.y >= 0 && move.x < 9 && move.y < 9)
+                            if(move.y !== y || move.x !== x)
+                                possibleFiltered.push(move);
+                    }
+
+                    return possibleFiltered;
+                }
+
+                possibleMoves(y, x, vboard) {
+                    let moves = this.theoreticalMoves(y, x);
+                    let filteredMoves = [];
+            
+                    let NBlocked = false;
+                    let SBlocked = false;
+                    let EBlocked = false;
+                    let WBlocked = false;
+
+                    for(let move of moves) {
+                        let piece = vboard.layout[move.y][move.x];
+
+                        // Check for black piece.
+                        if(this.side === 'black') {
+
+                            // Check North
+                            if(move.y < y && !NBlocked) {
+                                let canAdd = true;
+
+                                if(BoardHelper.IsBlackPiece(piece, vboard)) {
+                                    NBlocked = true;
+                                    canAdd = false;
+                                }
+
+                                if(BoardHelper.IsWhitePiece(piece, vboard)) NBlocked = true;
+                                if(canAdd) filteredMoves.push(move);
+                            }
+
+                            // Check South
+                            if(move.y > y && !SBlocked) {
+                                let canAdd = true;
+
+                                if(BoardHelper.IsBlackPiece(piece, vboard)) {
+                                    SBlocked = true;
+                                    canAdd = false;
+                                }
+
+                                if(BoardHelper.IsWhitePiece(piece, vboard)) SBlocked = true;
+                                if(canAdd) filteredMoves.push(move);
+                            }
+
+                            // Check East
+                            if(move.x < x && !EBlocked) {
+                                let canAdd = true;
+
+                                if(BoardHelper.IsBlackPiece(piece, vboard)) {
+                                    EBlocked = true;
+                                    canAdd = false;
+                                }
+
+                                if(BoardHelper.IsWhitePiece(piece, vboard)) EBlocked = true;
+                                if(canAdd) filteredMoves.push(move);
+                            }
+
+                            // Check West
+                            if(move.x > x && !WBlocked) {
+                                let canAdd = true;
+
+                                if(BoardHelper.IsBlackPiece(piece, vboard)) {
+                                    WBlocked = true;
+                                    canAdd = false;
+                                }
+
+                                if(BoardHelper.IsWhitePiece(piece, vboard)) WBlocked = true;
+                                if(canAdd) filteredMoves.push(move);
+                            }
+
+                        }
+
+                        // Check for white piece.
+                        if(this.side === 'white') {
+                        
+                            // Check North
+                            if(move.y < y && !NBlocked) {
+                                let canAdd = true;
+
+                                if(BoardHelper.IsWhitePiece(piece, vboard)) {
+                                    NBlocked = true;
+                                    canAdd = false;
+                                }
+
+                                if(BoardHelper.IsBlackPiece(piece, vboard)) NBlocked = true;
+                                if(canAdd) filteredMoves.push(move);
+                            }
+
+                            // Check South
+                            if(move.y > y && !SBlocked) {
+                                let canAdd = true;
+
+                                if(BoardHelper.IsWhitePiece(piece, vboard)) {
+                                    SBlocked = true;
+                                    canAdd = false;
+                                }
+
+                                if(BoardHelper.IsBlackPiece(piece, vboard)) SBlocked = true;
+                                if(canAdd) filteredMoves.push(move);
+                            }
+
+                            // Check East
+                            if(move.x < x && !EBlocked) {
+                                let canAdd = true;
+
+                                if(BoardHelper.IsWhitePiece(piece, vboard)) {
+                                    EBlocked = true;
+                                    canAdd = false;
+                                }
+
+                                if(BoardHelper.IsBlackPiece(piece, vboard)) EBlocked = true;
+                                if(canAdd) filteredMoves.push(move);
+                            }
+
+                            // Check West
+                            if(move.x > x && !WBlocked) {
+                                let canAdd = true;
+
+                                if(BoardHelper.IsWhitePiece(piece, vboard)) {
+                                    WBlocked = true;
+                                    canAdd = false;
+                                }
+
+                                if(BoardHelper.IsBlackPiece(piece, vboard)) WBlocked = true;
+                                if(canAdd) filteredMoves.push(move);
+                            }
+                        }
+                    }
+
+                    return filteredMoves;
+                }
+            }
+
+            customElements.define(ShogiRook.is, ShogiRook);
+        })();
+    </script>
+</dom-module>

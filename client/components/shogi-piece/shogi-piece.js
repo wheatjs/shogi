@@ -1,8 +1,15 @@
-'use strict';
-
-class ShogiPiece extends Polymer.Element {
+class ShogiPiece extends Polymer.LegacyElement {
 
     static get is() { return 'shogi-piece'; }
+    
+    constructor() {
+        super();
+    }
+
+    connectedCallback() {
+        super.connectedCallback();
+    }
+
 
 }
 
