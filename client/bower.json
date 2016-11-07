@@ -26,12 +26,8 @@
     "paper-dialog": "PolymerElements/paper-dialog#2.0-preview",
     "web-animations-js": "^2.2.2",
     "paper-radio-button": "PolymerElements/paper-radio-button#2.0-preview",
-    "paper-radio-group": "PolymerElements/paper-radio-group#^1.2.1",
     "paper-dialog-scrollable": "PolymerElements/paper-dialog-scrollable#2.0-preview",
-    "iron-resizable-behavior": "PolymerElements/iron-resizable-behavior#2.0-preview",
-    "lazy-imports": "mixin",
     "iron-pages": "PolymerElements/iron-pages#2.0-preview",
-    "app-route": "PolymerElements/app-route#2.0-preview",
-    "animate.css": "^3.5.2"
+    "app-route": "PolymerElements/app-route#2.0-preview"
   }
 }
