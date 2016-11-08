@@ -5,6 +5,21 @@
     class ShogiBoard extends Polymer.Element {
 
         static get is() { return 'shogi-board'; }
+        static get config() {
+            return {
+
+                properties: {
+
+                    turn: {
+                        type: String,
+                        value: 'black',
+                        reflectToAttribute: true
+                    }
+
+                }
+
+            };
+        }
 
         constructor() {
             super();
@@ -31,35 +46,35 @@
                 charcater: {
                     1: { tag: 'shogi-jeweled-general', side: 'black' },
                     2: { tag: 'shogi-king-general', side: 'white' },
-                    3: { tag: 'shogi-pawn', side: 'black', promotion: 30 },
-                    4: { tag: 'shogi-pawn', side: 'white', promotion: 29 },
-                    5: { tag: 'shogi-knight', side: 'black', promotion: 26 },
-                    6: { tag: 'shogi-knight', side: 'white', promotion: 25 },
-                    7: { tag: 'shogi-bishop', side: 'black', promotion: 20 },
-                    8: { tag: 'shogi-bishop', side: 'white', promotion: 19 },
-                    9: { tag: 'shogi-gold-general', side: 'black', promotion: 22 },
-                    10: { tag: 'shogi-gold-general', side: 'white', promotion: 21 },
-                    11: { tag: 'shogi-silver-general', side: 'black', promotion: 24 },
-                    12: { tag: 'shogi-silver-general', side: 'white', promotion: 23 },
-                    13: { tag: 'shogi-rook', side: 'black', promotion: 18 },
-                    14: { tag: 'shogi-rook', side: 'white', promotion: 17 },
-                    15: { tag: 'shogi-lance', side: 'black', promotion: 28 },
-                    16: { tag: 'shogi-lance', side: 'white', promotion: 27 },
+                    3: { tag: 'shogi-pawn', side: 'black', promotion: 30, capture: 4 },
+                    4: { tag: 'shogi-pawn', side: 'white', promotion: 29, capture: 3 },
+                    5: { tag: 'shogi-knight', side: 'black', promotion: 26, capture: 6 },
+                    6: { tag: 'shogi-knight', side: 'white', promotion: 25, capture: 5 },
+                    7: { tag: 'shogi-bishop', side: 'black', promotion: 20, capture: 8 },
+                    8: { tag: 'shogi-bishop', side: 'white', promotion: 19, capture: 7 },
+                    9: { tag: 'shogi-gold-general', side: 'black', promotion: 22, capture: 10 },
+                    10: { tag: 'shogi-gold-general', side: 'white', promotion: 21, capture: 9 },
+                    11: { tag: 'shogi-silver-general', side: 'black', promotion: 24, capture: 12 },
+                    12: { tag: 'shogi-silver-general', side: 'white', promotion: 23, capture: 11 },
+                    13: { tag: 'shogi-rook', side: 'black', promotion: 18, capture: 14 },
+                    14: { tag: 'shogi-rook', side: 'white', promotion: 17, capture: 13 },
+                    15: { tag: 'shogi-lance', side: 'black', promotion: 28, capture: 16 },
+                    16: { tag: 'shogi-lance', side: 'white', promotion: 27, capture: 15 },
 
-                    17: { tag: 'shogi-promoted-rook', side: 'white' },
-                    18: { tag: 'shogi-promoted-rook', side: 'black' },
-                    19: { tag: 'shogi-promoted-bishop', side: 'white' },
-                    20: { tag: 'shogi-promoted-bishop', side: 'black' },
-                    21: { tag: 'shogi-promoted-gold-general', side: 'white' },
-                    22: { tag: 'shogi-promoted-gold-general', side: 'black' },
-                    23: { tag: 'shogi-promoted-silver-general', side: 'white' },
-                    24: { tag: 'shogi-promoted-silver-general', side: 'black' },
-                    25: { tag: 'shogi-promoted-knight', side: 'white' },
-                    26: { tag: 'shogi-promoted-knight', side: 'black' },
-                    27: { tag: 'shogi-promoted-lance', side: 'white' },
-                    28: { tag: 'shogi-promoted-lance', side: 'black' },
-                    29: { tag: 'shogi-promoted-pawn', side: 'white' },
-                    30: { tag: 'shogi-promoted-pawn', side: 'black' }
+                    17: { tag: 'shogi-promoted-rook', side: 'white', capture: 13 },
+                    18: { tag: 'shogi-promoted-rook', side: 'black', capture: 14 },
+                    19: { tag: 'shogi-promoted-bishop', side: 'white', capture: 7 },
+                    20: { tag: 'shogi-promoted-bishop', side: 'black', capture: 8 },
+                    21: { tag: 'shogi-promoted-gold-general', side: 'white', capture: 9 },
+                    22: { tag: 'shogi-promoted-gold-general', side: 'black', capture: 10 },
+                    23: { tag: 'shogi-promoted-silver-general', side: 'white', capture: 11 },
+                    24: { tag: 'shogi-promoted-silver-general', side: 'black', capture: 12 },
+                    25: { tag: 'shogi-promoted-knight', side: 'white', capture: 5 },
+                    26: { tag: 'shogi-promoted-knight', side: 'black', capture: 6 },
+                    27: { tag: 'shogi-promoted-lance', side: 'white', capture: 15 },
+                    28: { tag: 'shogi-promoted-lance', side: 'black', capture: 16 },
+                    29: { tag: 'shogi-promoted-pawn', side: 'white', capture: 3 },
+                    30: { tag: 'shogi-promoted-pawn', side: 'black', capture: 4 }
                 },
 
                 whitePieces: [2, 4, 6, 8, 10, 12, 14, 16, 17, 19, 21, 23, 25, 27, 29],
@@ -77,6 +92,9 @@
 
             };
 
+            this.capturedWhitePieces = [];
+            this.capturedBlackPieces = [];
+
             this.selectedPiece = null;
             this.selectedX = 0;
             this.selectedY = 0;
@@ -86,6 +104,9 @@
             super.connectedCallback();
 
             this.board = this.$.board;
+            this.leftKoma = this.$.leftKoma;
+            this.rightKoma = this.$.rightKoma;
+
             this.placeSound = new Audio('/assets/audio/shogi-piece.mp3');
             this.drawBoard();
         }
@@ -102,13 +123,11 @@
                 }
             }
 
-            let attributes = this.vboard.attributes;            
+            let attributes = this.vboard.attributes;
             
-            for (let i = 0; i < attributes.length; i++) {
-                for (let z = 0; z < attributes[i].attributes.length; z++) {
+            for (let i = 0; i < attributes.length; i++) 
+                for (let z = 0; z < attributes[i].attributes.length; z++) 
                     BoardHelper.GetColumn(attributes[i].y, attributes[i].x, this.board).setAttribute(attributes[i].attributes[z], '');
-                }
-            }
 
             this.drawPieces();
         }
@@ -125,8 +144,9 @@
                         let piece = this.vboard.charcater[this.vboard.layout[y][x]];
                         let physicalPiece = BoardHelper.CreateElementWithAttributes(piece.tag, [{ side: piece.side }, { x: x }, { y: y }]);
 
-                        // Add Event Listener                        
-                        physicalPiece.addEventListener('tap', (e) => this.onPieceTapped(e), { passive: true, useCapture: false });
+                        // Add Event Listener
+                        if(this.turn === piece.side)
+                            physicalPiece.addEventListener('tap', (e) => this.onPieceTapped(e), { passive: true, useCapture: false });
 
                         BoardHelper.GetColumn(y, x, this.board).appendChild(physicalPiece);
                     }
@@ -224,8 +244,25 @@
                 whiteWin = targetPiece === 1;
             }
 
+            if (targetPiece !== 0) {
+                console.log('piece captured');
+
+                if (this.turn === 'black') {
+
+                }
+                    
+                console.log(this.whiteCaptured);
+                
+                if (this.turn === 'white') {
+                }
+                    
+                
+                console.log(this.blackCaptured);
+            }
+
             this.vboard.layout[targetY][targetX] = piece;
             this.vboard.layout[currentY][currentX] = 0;
+            this.turn = (this.turn === 'black' ? 'white' : 'black');
 
             this.placeSound.play();
             this.drawPieces();

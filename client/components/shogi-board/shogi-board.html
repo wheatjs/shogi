@@ -10,6 +10,7 @@
 <link rel="import" href="../shogi-pieces/shogi-jeweled-general.html">
 <link rel="import" href="../shogi-pieces/shogi-rook.html">
 <link rel="import" href="../shogi-pieces/shogi-promoted-rook.html">
+<link rel="import" href="../shogi-pieces/shogi-promoted-bishop.html">
 <link rel="import" href="../animated-css.html">
 
 <dom-module id="shogi-board">
@@ -74,7 +75,7 @@
                 height: 250px;
                 border: 3px solid black;
                 border-left: none;
-                border-radius: 0 50% 50% 0;
+                border-radius: 0 5px 5px 0;
                 @apply --layout-self-end;
             }
 
@@ -83,7 +84,7 @@
                 height: 250px;
                 border: 3px solid black;
                 border-right: none;
-                border-radius: 50% 0 0 50%;
+                border-radius: 5px 0 0 5px;
                 @apply --layout-self-start;
             }
 
