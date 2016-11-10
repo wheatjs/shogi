@@ -40,38 +40,30 @@
                  * {|, |, |, |, |, |, |, |, |}
                  */
                 theoreticalMoves(y, x) {
-                    
-                    let possible = [];
-                    let possibleFiltered = [];
+                    let moves = [];
 
                     let cy = y;
                     if (this.side === 'black')
-                        for(let i = 0; i < 9; i++) possible.push({ x: x, y: cy-- });
+                        for(let i = 0; i < 9; i++) moves.push({ x: x, y: cy-- });
 
                     if (this.side === 'white')
-                        for(let i = 0; i < 9; i++) possible.push({ x: x, y: cy++ });
+                        for(let i = 0; i < 9; i++) moves.push({ x: x, y: cy++ });
 
-                    // Filter out all invalid moves.
-                    for(let move of possible) {
-                        if(move.x >= 0 && move.y >= 0 && move.x < 9 && move.y < 9 && move.y !== y)
-                            possibleFiltered.push(move);
-                    }
-
-                    return possibleFiltered;
+                    return BoardUtil.filterInvalidMoves(moves, { x: x, y: y });
                 }
 
-                possibleMoves(y, x, vboard) {
+                possibleMoves(y, x, board, lexicon) {
                     let moves = this.theoreticalMoves(y, x);
                     let filteredMoves = [];
                     
                     for(let move of moves) {
-                        let piece = vboard.layout[move.y][move.x];
+                        let piece = board[move.y][move.x];
 
                         if(this.side === 'black') {
-                            if(BoardHelper.IsBlackPiece(piece, vboard)) 
+                            if(BoardUtil.isBlackPiece(piece, lexicon)) 
                                 break;
 
-                            if(BoardHelper.IsWhitePiece(piece, vboard)) {
+                            if(BoardUtil.isWhitePiece(piece, lexicon)) {
                                 filteredMoves.push(move);
                                 break;
                             }
@@ -80,10 +72,10 @@
                         }
 
                         if(this.side === 'white') {
-                            if(BoardHelper.IsWhitePiece(piece, vboard)) 
+                            if(BoardUtil.isWhitePiece(piece, lexicon)) 
                                 break;
 
-                            if(BoardHelper.IsBlackPiece(piece, vboard)) {
+                            if(BoardUtil.isBlackPiece(piece, lexicon)) {
                                 filteredMoves.push(move);
                                 break;
                             }

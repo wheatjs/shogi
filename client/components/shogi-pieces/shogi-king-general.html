@@ -40,7 +40,7 @@
                  * {|, |, |, |, |, |, |, |, |}
                  */
                 theoreticalMoves(y, x) {
-                    let possible = [
+                    let moves = [
                         { y: y - 1, x: x },
                         { y: y + 1, x: x },
                         { y: y - 1, x: x - 1 },
@@ -50,29 +50,21 @@
                         { y: y, x: x - 1 },
                         { y: y, x: x + 1 }
                     ];
-                    let possibleFiltered = [];
 
-
-                    // Filter out all invalid moves.
-                    for(let move of possible) {
-                        if(move.x >= 0 && move.y >= 0 && move.x < 9 && move.y < 9)
-                            possibleFiltered.push(move);
-                    }
-
-                    return possibleFiltered;
+                    return BoardUtil.filterInvalidMoves(moves, { x: x, y: y });
                 }
 
-                possibleMoves(y, x, vboard) {
+                possibleMoves(y, x, board, lexicon) {
                     let moves = this.theoreticalMoves(y, x);
                     let filteredMoves = [];
                     
                     for(let move of moves) {
-                        let piece = vboard.layout[move.y][move.x];
+                        let piece = board[move.y][move.x];
                         
-                        if(this.side === 'white' && BoardHelper.IsBlackPiece(piece, vboard) || piece === 0)
+                        if(this.side === 'white' && BoardUtil.isBlackPiece(piece, lexicon) || piece === 0)
                             filteredMoves.push(move);
 
-                        if(this.side === 'black' && BoardHelper.IsWhitePiece(piece, vboard) || piece === 0)
+                        if(this.side === 'black' && BoardUtil.isWhitePiece(piece, lexicon) || piece === 0)
                             filteredMoves.push(move);
                     }
 

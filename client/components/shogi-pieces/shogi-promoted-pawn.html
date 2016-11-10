@@ -1,20 +1,21 @@
 <link rel="import" href="../shogi-piece/shogi-piece.html">
 
-<dom-module id="shogi-jeweled-general">
+<dom-module id="shogi-gold-general">
     <script>
         (function() {
             'use strict';
 
-            class ShogiJeweledGeneral extends ShogiPiece {
+            class ShogiPromotedPawn extends ShogiPiece {
 
-                static get is() { return 'shogi-jeweled-general'; }
+                static get is() { return 'shogi-promoted-pawn'; }
                 static get config() {
                     return {
                         properties: {
-                            kanji: { value: '玉將' },
-                            romaji: { value: 'Gyokushō' },
-                            english: { value: 'Jeweled General' },
-                            side: { type: String }
+                            kanji: { value: 'と金 ' },
+                            romaji: { value: 'Tokin' },
+                            english: { value: 'Promoted Pawn' },
+                            side: { type: String },
+                            promoted: { type: Boolean, value: true, reflectToAttribute: true }
                         }
                     }
                 }
@@ -34,22 +35,35 @@
                  * {|, |, |, |, |, |, |, |, |}
                  * {|, |, |, #, #, #, |, |, |}
                  * {|, |, |, #, X, #, |, |, |}
-                 * {|, |, |, #, #, #, |, |, |}
+                 * {|, |, |, |, #, |, |, |, |}
                  * {|, |, |, |, |, |, |, |, |}
                  * {|, |, |, |, |, |, |, |, |}
                  * {|, |, |, |, |, |, |, |, |}
                  */
                 theoreticalMoves(y, x) {
-                    let moves = [
-                        { y: y - 1, x: x },
-                        { y: y + 1, x: x },
-                        { y: y - 1, x: x - 1 },
-                        { y: y + 1, x: x - 1 },
-                        { y: y - 1, x: x + 1 },
-                        { y: y + 1, x: x + 1 },
-                        { y: y, x: x - 1 },
-                        { y: y, x: x + 1 }
-                    ];
+                    let moves = [];
+
+                    if (this.side === 'black') {
+                        moves = [
+                            { y: y - 1, x: x},
+                            { y: y - 1, x: x - 1},
+                            { y: y - 1, x: x + 1},
+                            { y: y, x: x - 1},
+                            { y: y, x: x + 1},
+                            { y: y + 1, x: x}
+                        ];
+                    }
+
+                    if (this.side === 'white') {
+                        moves = [
+                            { y: y + 1, x: x},
+                            { y: y + 1, x: x - 1},
+                            { y: y + 1, x: x + 1},
+                            { y: y, x: x - 1},
+                            { y: y, x: x + 1},
+                            { y: y - 1, x: x}
+                        ];
+                    }
 
                     return BoardUtil.filterInvalidMoves(moves, { x: x, y: y });
                 }
@@ -73,7 +87,7 @@
 
             }
 
-            customElements.define(ShogiJeweledGeneral.is, ShogiJeweledGeneral);
+            customElements.define(ShogiPromotedPawn.is, ShogiPromotedPawn);
         })();
     </script>
 </dom-module>

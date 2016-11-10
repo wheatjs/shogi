@@ -41,92 +41,77 @@
                  * {|, |, |, |, #, |, |, |, |}
                  */
                 theoreticalMoves(y, x) {
-                    let raw = [],
-                        filtered = [];
+                    let moves = [];
 
                     // To Top
                     let xc = x, yc = y;
-                    for (var i = 0; i < 8; i++)  raw.push({ y: yc++, x: xc });
+                    for (var i = 0; i < 8; i++)  moves.push({ y: yc++, x: xc });
 
                     // To Bottom
                     xc = x, yc = y;
-                    for (var i = 0; i < 8; i++) raw.push({ y: yc--, x: xc });
+                    for (var i = 0; i < 8; i++) moves.push({ y: yc--, x: xc });
 
                     // To Left
                     xc = x, yc = y;
-                    for (var i = 0; i < 8; i++) raw.push({ y: yc, x: xc++ });
+                    for (var i = 0; i < 8; i++) moves.push({ y: yc, x: xc++ });
 
                     // To Right
                     xc = x, yc = y;
-                    for (var i = 0; i < 8; i++) raw.push({ y: yc, x: xc-- });
+                    for (var i = 0; i < 8; i++) moves.push({ y: yc, x: xc-- });
 
-                    // Filter out all invalid moves.
-                    for(let move of raw) {
-                        if(move.x >= 0 && move.y >= 0 && move.x < 9 && move.y < 9)
-                            if(move.y !== y || move.x !== x)
-                                filtered.push(move);
-                    }
-
-                    return filtered;
+                    return BoardUtil.filterInvalidMoves(moves, { x: x, y: y });
                 }
 
                 promotedMoves(y, x) {
-                    let raw = [{ y: y-1, x: x-1 }, { y: y+1, x: x+1 }, { y: y-1, x: x+1 }, { y: y+1, x: x-1 }];
-                    let filtered = [];
+                    let moves = [{ y: y-1, x: x-1 }, { y: y+1, x: x+1 }, { y: y-1, x: x+1 }, { y: y+1, x: x-1 }];
 
-                    for(let move of raw) {
-                        if(move.x >= 0 && move.y >= 0 && move.x < 9 && move.y < 9)
-                            if(move.y !== y || move.x !== x)
-                                filtered.push(move);
-                    }
-
-                    return filtered;
+                    return BoardUtil.filterInvalidMoves(moves, { x: x, y: y });
                 }
 
-                possibleMoves(y, x, vboard) {
+                possibleMoves(y, x, board, lexicon) {
                     let moves = this.theoreticalMoves(y, x);
                     let filteredMoves = [];
 
                     let NBlocked = false,
                         SBlocked = false,
                         EBlocked = false,
-                        WBlocked = false;
+                        WBlocked = false; 
 
                     for(let move of moves) {
-                        let piece = vboard.layout[move.y][move.x];
+                        let piece = board[move.y][move.x];
 
                         // Check for black piece.
                         if(this.side === 'black') {
 
                             // Check North
                             if(move.y < y && !NBlocked) {
-                                NBlocked = BoardHelper.IsWhitePiece(piece, vboard) || BoardHelper.IsBlackPiece(piece, vboard);
+                                NBlocked = BoardUtil.isWhitePiece(piece, lexicon) || BoardUtil.isBlackPiece(piece, lexicon);
 
-                                if(!BoardHelper.IsBlackPiece(piece, vboard)) 
+                                if(!BoardUtil.isBlackPiece(piece, lexicon)) 
                                     filteredMoves.push(move);
                             }
 
                             // Check South
                             if(move.y > y && !SBlocked) {
-                                SBlocked = BoardHelper.IsWhitePiece(piece, vboard) || BoardHelper.IsBlackPiece(piece, vboard);
+                                SBlocked = BoardUtil.isWhitePiece(piece, lexicon) || BoardUtil.isBlackPiece(piece, lexicon);
 
-                                if(!BoardHelper.IsBlackPiece(piece, vboard))
+                                if(!BoardUtil.isBlackPiece(piece, lexicon))
                                     filteredMoves.push(move);
                             }
 
                             // Check East
                             if(move.x < x && !EBlocked) {
-                                EBlocked = BoardHelper.IsWhitePiece(piece, vboard) || BoardHelper.IsBlackPiece(piece, vboard);
+                                EBlocked = BoardUtil.isWhitePiece(piece, lexicon) || BoardUtil.isBlackPiece(piece, lexicon);
 
-                                if(!BoardHelper.IsBlackPiece(piece, vboard)) 
+                                if(!BoardUtil.isBlackPiece(piece, lexicon)) 
                                     filteredMoves.push(move);
                             }
 
                             // Check West
                             if(move.x > x && !WBlocked) {
-                                WBlocked = BoardHelper.IsWhitePiece(piece, vboard) || BoardHelper.IsBlackPiece(piece, vboard);
+                                WBlocked = BoardUtil.isWhitePiece(piece, lexicon) || BoardUtil.isBlackPiece(piece, lexicon);
 
-                                if(!BoardHelper.IsBlackPiece(piece, vboard)) 
+                                if(!BoardUtil.isBlackPiece(piece, lexicon)) 
                                     filteredMoves.push(move);
                             }
 
@@ -137,33 +122,33 @@
                         
                             // Check North
                             if(move.y < y && !NBlocked) {
-                                NBlocked = BoardHelper.IsWhitePiece(piece, vboard) || BoardHelper.IsBlackPiece(piece, vboard);
+                                NBlocked = BoardUtil.isWhitePiece(piece, lexicon) || BoardUtil.isBlackPiece(piece, lexicon);
 
-                                if(!BoardHelper.IsWhitePiece(piece, vboard)) 
+                                if(!BoardUtil.isWhitePiece(piece, lexicon)) 
                                     filteredMoves.push(move);
                             }
 
                             // Check South
                             if(move.y > y && !SBlocked) {
-                                SBlocked = BoardHelper.IsWhitePiece(piece, vboard) || BoardHelper.IsBlackPiece(piece, vboard);
+                                SBlocked = BoardUtil.isWhitePiece(piece, lexicon) || BoardUtil.isBlackPiece(piece, lexicon);
 
-                                if(!BoardHelper.IsWhitePiece(piece, vboard)) 
+                                if(!BoardUtil.isWhitePiece(piece, lexicon)) 
                                     filteredMoves.push(move);
                             }
 
                             // Check East
                             if(move.x < x && !EBlocked) {
-                                EBlocked = BoardHelper.IsWhitePiece(piece, vboard) || BoardHelper.IsBlackPiece(piece, vboard);
+                                EBlocked = BoardUtil.isWhitePiece(piece, lexicon) || BoardUtil.isBlackPiece(piece, lexicon);
 
-                                if(!BoardHelper.IsWhitePiece(piece, vboard)) 
+                                if(!BoardUtil.isWhitePiece(piece, lexicon)) 
                                     filteredMoves.push(move);
                             }
 
                             // Check West
                             if(move.x > x && !WBlocked) {
-                                WBlocked = BoardHelper.IsWhitePiece(piece, vboard) || BoardHelper.IsBlackPiece(piece, vboard);
+                                WBlocked = BoardUtil.isWhitePiece(piece, lexicon) || BoardUtil.isBlackPiece(piece, lexicon);
 
-                                if(!BoardHelper.IsWhitePiece(piece, vboard)) 
+                                if(!BoardUtil.isWhitePiece(piece, lexicon)) 
                                     filteredMoves.push(move);
                             }
                         }
@@ -172,12 +157,12 @@
                     let promotedMoves = this.promotedMoves(y, x);
 
                     for(let move of promotedMoves) {
-                        let piece = vboard.layout[move.y][move.x];
+                        let piece = board[move.y][move.x];
 
-                        if(this.side === 'white' && BoardHelper.IsBlackPiece(piece, vboard) || piece === 0)
+                        if(this.side === 'white' && BoardUtil.isBlackPiece(piece, lexicon) || piece === 0)
                             filteredMoves.push(move)
 
-                        if(this.side === 'black' && BoardHelper.IsWhitePiece(piece, vboard) || piece === 0)
+                        if(this.side === 'black' && BoardUtil.isWhitePiece(piece, lexicon) || piece === 0)
                             filteredMoves.push(move)
                     }
 

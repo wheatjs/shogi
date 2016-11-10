@@ -41,54 +41,40 @@
                  * {#, |, |, |, |, |, |, |, #}
                  */
                 theoreticalMoves(y, x) {
-                    var possible = [];
-                    var possibleFiltered = [];
+                    var moves = [];
 
                     // To Bottom Left
                     let xc = x, yc = y;
-                    for (var i = 0; i < 8; i++)  possible.push({ y: yc++, x: xc-- });
+                    for (var i = 0; i < 8; i++)  moves.push({ y: yc++, x: xc-- });
 
                     // To Top Left
                     xc = x, yc = y;
-                    for (var i = 0; i < 8; i++) possible.push({ y: yc--, x: xc-- });
+                    for (var i = 0; i < 8; i++) moves.push({ y: yc--, x: xc-- });
 
                     // To Bottom Left
                     xc = x, yc = y;
-                    for (var i = 0; i < 8; i++) possible.push({ y: yc++, x: xc++ });
+                    for (var i = 0; i < 8; i++) moves.push({ y: yc++, x: xc++ });
 
                     // To Top Right
                     xc = x, yc = y;
-                    for (var i = 0; i < 8; i++) possible.push({ y: yc--, x: xc++ });
+                    for (var i = 0; i < 8; i++) moves.push({ y: yc--, x: xc++ });
 
-                    // Filter out all invalid moves.
-                    for(let move of possible) {
-                        if(move.x >= 0 && move.y >= 0 && move.x < 9 && move.y < 9 && move.x !== x && move.y !== y)
-                            possibleFiltered.push(move);
-                    }
-
-                    return possibleFiltered;
+                    return BoardUtil.filterInvalidMoves(moves, { x: x, y: y });
                 }
 
                 promotedMoves(y, x) {
-                    let possible = [
+                    let moves = [
                         { y: y-1, x: x },
                         { y: y+1, x: x },
                         { y: y, x: x+1 },
                         { y: y, x: x-1 }
                     ];
-                    let possibleFiltered = [];
 
-                    for(let move of possible) {
-                        if(move.x >= 0 && move.y >= 0 && move.x < 9 && move.y < 9)
-                            if(move.y !== y || move.x !== x)
-                                possibleFiltered.push(move);
-                    }
-
-                    return possibleFiltered;
+                    return BoardUtil.filterInvalidMoves(moves, { x: x, y: y });
                 }
 
 
-                possibleMoves(y, x, vboard) {
+                possibleMoves(y, x, board, lexicon) {
                     let moves = this.theoreticalMoves(y, x);
                     let filteredMoves = [];
             
@@ -98,40 +84,40 @@
                         SWBlocked = false;
 
                     for(let move of moves) {
-                        let piece = vboard.layout[move.y][move.x];
+                        let piece = board[move.y][move.x];
 
                         // Check for black piece.
                         if(this.side === 'black') {
 
                             // Find Closest North/East Block Piece
                             if(move.x > x && move.y < y && !NEBlocked) {
-                                NEBlocked = BoardHelper.IsWhitePiece(piece, vboard) || BoardHelper.IsBlackPiece(piece, vboard);
+                                NEBlocked = BoardUtil.isWhitePiece(piece, lexicon) || BoardUtil.isBlackPiece(piece, lexicon);
                                 
-                                if(!BoardHelper.IsBlackPiece(piece, vboard))
+                                if(!BoardUtil.isBlackPiece(piece, lexicon))
                                     filteredMoves.push(move);
                             }
 
                             // Find Closest North/West Block Piece
                             if(move.x < x && move.y < y && !NWBlocked) {
-                                NWBlocked = BoardHelper.IsWhitePiece(piece, vboard) || BoardHelper.IsBlackPiece(piece, vboard);
-
-                                if(!BoardHelper.IsBlackPiece(piece, vboard))
+                                NWBlocked = BoardUtil.isWhitePiece(piece, lexicon) || BoardUtil.isBlackPiece(piece, lexicon);
+                                
+                                if(!BoardUtil.isBlackPiece(piece, lexicon))
                                     filteredMoves.push(move);
                             }
 
                             // Find Closest South/East Block Piece
                             if(move.x > x && move.y > y && !SEBlocked) {
-                                SEBlocked = BoardHelper.IsWhitePiece(piece, vboard) || BoardHelper.IsBlackPiece(piece, vboard);
-
-                                if(!BoardHelper.IsBlackPiece(piece, vboard))
+                                SEBlocked = BoardUtil.isWhitePiece(piece, lexicon) || BoardUtil.isBlackPiece(piece, lexicon);
+                                
+                                if(!BoardUtil.isBlackPiece(piece, lexicon))
                                     filteredMoves.push(move);
                             }
 
                             // Find Closest South/East Block Piece
                             if(move.x < x && move.y > y && !SWBlocked) {
-                                SWBlocked = BoardHelper.IsWhitePiece(piece, vboard) || BoardHelper.IsBlackPiece(piece, vboard);
-
-                                if(!BoardHelper.IsBlackPiece(piece, vboard))
+                                SWBlocked = BoardUtil.isWhitePiece(piece, lexicon) || BoardUtil.isBlackPiece(piece, lexicon);
+                                
+                                if(!BoardUtil.isBlackPiece(piece, lexicon))
                                     filteredMoves.push(move);
                             }
                         }
@@ -142,33 +128,33 @@
 
                             // Find Closest North/East Block Piece
                             if(move.x > x && move.y < y && !NEBlocked) {
-                                NEBlocked = BoardHelper.IsBlackPiece(piece, vboard) || BoardHelper.IsWhitePiece(piece, vboard);
+                                NEBlocked = BoardUtil.isBlackPiece(piece, lexicon) || BoardUtil.isWhitePiece(piece, lexicon);
 
-                                if(!BoardHelper.IsWhitePiece(piece, vboard))
+                                if(!BoardUtil.isWhitePiece(piece, lexicon))
                                     filteredMoves.push(move);
                             }
 
                             // Find Closest North/West Block Piece
                             if(move.x < x && move.y < y && !NWBlocked) {
-                                NWBlocked = BoardHelper.IsBlackPiece(piece, vboard) || BoardHelper.IsWhitePiece(piece, vboard)
+                                NWBlocked = BoardUtil.isBlackPiece(piece, lexicon) || BoardUtil.isWhitePiece(piece, lexicon);
 
-                                if(!BoardHelper.IsWhitePiece(piece, vboard))
+                                if(!BoardUtil.isWhitePiece(piece, lexicon))
                                     filteredMoves.push(move);
                             }
 
                             // Find Closest South/East Block Piece
                             if(move.x > x && move.y > y && !SEBlocked) {
-                                SEBlocked = BoardHelper.IsBlackPiece(piece, vboard) || BoardHelper.IsWhitePiece(piece, vboard);
+                                SEBlocked = BoardUtil.isBlackPiece(piece, lexicon) || BoardUtil.isWhitePiece(piece, lexicon);
 
-                                if(!BoardHelper.IsWhitePiece(piece, vboard))
+                                if(!BoardUtil.isWhitePiece(piece, lexicon))
                                     filteredMoves.push(move);
                             }
 
                             // Find Closest South/East Block Piece
                             if(move.x < x && move.y > y && !SWBlocked) {
-                                SWBlocked = BoardHelper.IsBlackPiece(piece, vboard) || BoardHelper.IsWhitePiece(piece, vboard);
+                                SWBlocked = BoardUtil.isBlackPiece(piece, lexicon) || BoardUtil.isWhitePiece(piece, lexicon);
 
-                                if(!BoardHelper.IsWhitePiece(piece, vboard))
+                                if(!BoardUtil.isWhitePiece(piece, lexicon))
                                     filteredMoves.push(move);
                             }
                         }
@@ -177,20 +163,13 @@
                     let promotedMoves = this.promotedMoves(y, x);
 
                     for(let move of promotedMoves) {
-                        let piece = vboard.layout[move.y][move.x];
+                        let piece = board[move.y][move.x];
 
-                        if(this.side === 'white') {
-                            if(BoardHelper.IsBlackPiece(piece, vboard) || piece === 0) {
+                        if(this.side === 'white' && BoardUtil.isBlackPiece(piece, lexicon) || piece === 0)
+                            filteredMoves.push(move)
+
+                        if(this.side === 'black' && BoardUtil.isWhitePiece(piece, lexicon) || piece === 0)
                                 filteredMoves.push(move)
-                            }
-                        }
-
-                        if(this.side === 'black') {
-                            if(BoardHelper.IsWhitePiece(piece, vboard) || piece === 0) {
-                                filteredMoves.push(move)
-                            }
-                        }
-
                     }
 
                     return filteredMoves;

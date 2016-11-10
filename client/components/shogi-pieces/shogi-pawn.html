@@ -1,8 +1,11 @@
 <link rel="import" href="../shogi-piece/shogi-piece.html">
+<link rel="import" href="../utils/utils.html">
 
 <dom-module id="shogi-knight">
     <script>
         (function() {
+            /// <reference path="../utils/board-util.html" />
+
             'use strict';
 
             class ShogiPawn extends ShogiPiece {
@@ -40,45 +43,26 @@
                  * {|, |, |, |, |, |, |, |, |}
                  */
                 theoreticalMoves(y, x) {
-                    
-                    let possible = [];
-                    let possibleFiltered = [];
+                    let moves = this.side === 'black' ?  
+                        [{ y: y - 1, x: x }] : [{ y: y + 1, x: x }];
 
-                    if (this.side === 'black') {
-                        possible = [
-                            { y: y - 1, x: x },
-                        ];
-                    }
-
-                    if (this.side === 'white') {
-                        possible = [
-                            { y: y + 1, x: x },
-                        ];
-                    }
-
-                    // Filter out all invalid moves.
-                    for(let move of possible) {
-                        if(move.x >= 0 && move.y >= 0 && move.x < 9 && move.y < 9 && move.y !== y)
-                            possibleFiltered.push(move);
-                    }
-
-                    return possibleFiltered;
-
+                    return BoardUtil.filterInvalidMoves(moves, { x: x, y: y });
                 }
 
-                possibleMoves(y, x, vboard) {
-                    let moves = this.theoreticalMoves(y, x);
+                possibleMoves(y, x, board, lexicon) {
+                    let moves = this.theoreticalMoves(parseInt(y), parseInt(x));
                     
                     for(let move of moves) {
-                        let piece = vboard.layout[move.y][move.x];
-                        
-                        if(this.side === 'white' && BoardHelper.IsWhitePiece(piece, vboard))
-                            moves.splice(moves.indexOf(move), 1);
+                        let piece = board[move.y][move.x];
 
-                        if(this.side === 'black' && BoardHelper.IsBlackPiece(piece, vboard))
-                            moves.splice(moves.indexOf(move), 1);
+                        if(piece !== 0) {
+                            if(this.side === 'white' && BoardUtil.isWhitePiece(piece, lexicon))
+                                moves.splice(moves.indexOf(move), 1);
+
+                            if(this.side === 'black' && BoardUtil.isBlackPiece(piece, lexicon))
+                                moves.splice(moves.indexOf(move), 1);
+                        }
                     }
-
                     return moves;
                 }
 

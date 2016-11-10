@@ -1,4 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../config/config.html">
 <link rel="import" href="../shogi-piece/shogi-piece.html">
 <link rel="import" href="../shogi-pieces/shogi-knight.html">
 <link rel="import" href="../shogi-pieces/shogi-pawn.html">
@@ -11,6 +12,9 @@
 <link rel="import" href="../shogi-pieces/shogi-rook.html">
 <link rel="import" href="../shogi-pieces/shogi-promoted-rook.html">
 <link rel="import" href="../shogi-pieces/shogi-promoted-bishop.html">
+<link rel="import" href="../shogi-pieces/shogi-promoted-pawn.html">
+<link rel="import" href="../shogi-pieces/shogi-promoted-silver-general.html">
+<link rel="import" href="../shogi-pieces/shogi-promoted-lance.html">
 <link rel="import" href="../animated-css.html">
 
 <dom-module id="shogi-board">
@@ -39,7 +43,7 @@
                 @apply --layout-vertical;
             }
 
-            :host [row] {
+            [row] {
                 position: relative;
                 @apply --layout-flex;
                 @apply --layout-horizontal;
@@ -68,6 +72,7 @@
                 z-index: 5000;
                 position: absolute;
                 top: 0; left: 0; right: 0; bottom: 0;
+                cursor: pointer;
             }
 
             .right-koma {

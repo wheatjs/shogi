@@ -40,36 +40,28 @@
                  * {#, |, |, |, |, |, |, |, #}
                  */
                 theoreticalMoves(y, x) {
-                    var possible = [];
-                    var possibleFiltered = [];
+                    var moves = [];
 
                     // To Top
                     let xc = x, yc = y;
-                    for (var i = 0; i < 8; i++)  possible.push({ y: yc++, x: xc });
+                    for (var i = 0; i < 8; i++)  moves.push({ y: yc++, x: xc });
 
                     // To Bottom
                     xc = x, yc = y;
-                    for (var i = 0; i < 8; i++) possible.push({ y: yc--, x: xc });
+                    for (var i = 0; i < 8; i++) moves.push({ y: yc--, x: xc });
 
                     // To Left
                     xc = x, yc = y;
-                    for (var i = 0; i < 8; i++) possible.push({ y: yc, x: xc++ });
+                    for (var i = 0; i < 8; i++) moves.push({ y: yc, x: xc++ });
 
                     // To Right
                     xc = x, yc = y;
-                    for (var i = 0; i < 8; i++) possible.push({ y: yc, x: xc-- });
+                    for (var i = 0; i < 8; i++) moves.push({ y: yc, x: xc-- });
 
-                    // Filter out all invalid moves.
-                    for(let move of possible) {
-                        if(move.x >= 0 && move.y >= 0 && move.x < 9 && move.y < 9)
-                            if(move.y !== y || move.x !== x)
-                                possibleFiltered.push(move);
-                    }
-
-                    return possibleFiltered;
+                    return BoardUtil.filterInvalidMoves(moves, { x: x, y: y });
                 }
 
-                possibleMoves(y, x, vboard) {
+                possibleMoves(y, x, board, lexicon) {
                     let moves = this.theoreticalMoves(y, x);
                     let filteredMoves = [];
             
@@ -79,61 +71,41 @@
                     let WBlocked = false;
 
                     for(let move of moves) {
-                        let piece = vboard.layout[move.y][move.x];
+                        let piece = board[move.y][move.x];
 
                         // Check for black piece.
                         if(this.side === 'black') {
 
                             // Check North
                             if(move.y < y && !NBlocked) {
-                                let canAdd = true;
+                                NBlocked = BoardUtil.isWhitePiece(piece, lexicon) || BoardUtil.isBlackPiece(piece, lexicon);
 
-                                if(BoardHelper.IsBlackPiece(piece, vboard)) {
-                                    NBlocked = true;
-                                    canAdd = false;
-                                }
-
-                                if(BoardHelper.IsWhitePiece(piece, vboard)) NBlocked = true;
-                                if(canAdd) filteredMoves.push(move);
+                                if(!BoardUtil.isBlackPiece(piece, lexicon)) 
+                                    filteredMoves.push(move);
                             }
 
                             // Check South
                             if(move.y > y && !SBlocked) {
-                                let canAdd = true;
+                                SBlocked = BoardUtil.isWhitePiece(piece, lexicon) || BoardUtil.isBlackPiece(piece, lexicon);
 
-                                if(BoardHelper.IsBlackPiece(piece, vboard)) {
-                                    SBlocked = true;
-                                    canAdd = false;
-                                }
-
-                                if(BoardHelper.IsWhitePiece(piece, vboard)) SBlocked = true;
-                                if(canAdd) filteredMoves.push(move);
+                                if(!BoardUtil.isBlackPiece(piece, lexicon)) 
+                                    filteredMoves.push(move);
                             }
 
                             // Check East
                             if(move.x < x && !EBlocked) {
-                                let canAdd = true;
+                                EBlocked = BoardUtil.isWhitePiece(piece, lexicon) || BoardUtil.isBlackPiece(piece, lexicon);
 
-                                if(BoardHelper.IsBlackPiece(piece, vboard)) {
-                                    EBlocked = true;
-                                    canAdd = false;
-                                }
-
-                                if(BoardHelper.IsWhitePiece(piece, vboard)) EBlocked = true;
-                                if(canAdd) filteredMoves.push(move);
+                                if(!BoardUtil.isBlackPiece(piece, lexicon)) 
+                                    filteredMoves.push(move);
                             }
 
                             // Check West
                             if(move.x > x && !WBlocked) {
-                                let canAdd = true;
+                                WBlocked = BoardUtil.isWhitePiece(piece, lexicon) || BoardUtil.isBlackPiece(piece, lexicon);
 
-                                if(BoardHelper.IsBlackPiece(piece, vboard)) {
-                                    WBlocked = true;
-                                    canAdd = false;
-                                }
-
-                                if(BoardHelper.IsWhitePiece(piece, vboard)) WBlocked = true;
-                                if(canAdd) filteredMoves.push(move);
+                                if(!BoardUtil.isBlackPiece(piece, lexicon)) 
+                                    filteredMoves.push(move);
                             }
 
                         }
@@ -143,54 +115,34 @@
                         
                             // Check North
                             if(move.y < y && !NBlocked) {
-                                let canAdd = true;
+                                NBlocked = BoardUtil.isWhitePiece(piece, lexicon) || BoardUtil.isBlackPiece(piece, lexicon);
 
-                                if(BoardHelper.IsWhitePiece(piece, vboard)) {
-                                    NBlocked = true;
-                                    canAdd = false;
-                                }
-
-                                if(BoardHelper.IsBlackPiece(piece, vboard)) NBlocked = true;
-                                if(canAdd) filteredMoves.push(move);
+                                if(!BoardUtil.isWhitePiece(piece, lexicon)) 
+                                    filteredMoves.push(move);
                             }
 
                             // Check South
                             if(move.y > y && !SBlocked) {
-                                let canAdd = true;
+                                SBlocked = BoardUtil.isWhitePiece(piece, lexicon) || BoardUtil.isBlackPiece(piece, lexicon);
 
-                                if(BoardHelper.IsWhitePiece(piece, vboard)) {
-                                    SBlocked = true;
-                                    canAdd = false;
-                                }
-
-                                if(BoardHelper.IsBlackPiece(piece, vboard)) SBlocked = true;
-                                if(canAdd) filteredMoves.push(move);
+                                if(!BoardUtil.isWhitePiece(piece, lexicon)) 
+                                    filteredMoves.push(move);
                             }
 
                             // Check East
                             if(move.x < x && !EBlocked) {
-                                let canAdd = true;
+                                EBlocked = BoardUtil.isWhitePiece(piece, lexicon) || BoardUtil.isBlackPiece(piece, lexicon);
 
-                                if(BoardHelper.IsWhitePiece(piece, vboard)) {
-                                    EBlocked = true;
-                                    canAdd = false;
-                                }
-
-                                if(BoardHelper.IsBlackPiece(piece, vboard)) EBlocked = true;
-                                if(canAdd) filteredMoves.push(move);
+                                if(!BoardUtil.isWhitePiece(piece, lexicon)) 
+                                    filteredMoves.push(move);
                             }
 
                             // Check West
                             if(move.x > x && !WBlocked) {
-                                let canAdd = true;
+                                WBlocked = BoardUtil.isWhitePiece(piece, lexicon) || BoardUtil.isBlackPiece(piece, lexicon);
 
-                                if(BoardHelper.IsWhitePiece(piece, vboard)) {
-                                    WBlocked = true;
-                                    canAdd = false;
-                                }
-
-                                if(BoardHelper.IsBlackPiece(piece, vboard)) WBlocked = true;
-                                if(canAdd) filteredMoves.push(move);
+                                if(!BoardUtil.isWhitePiece(piece, lexicon)) 
+                                    filteredMoves.push(move);
                             }
                         }
                     }
