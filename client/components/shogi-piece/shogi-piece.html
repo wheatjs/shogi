@@ -3,17 +3,18 @@
         <style>
             :host {
                 z-index: 5000;
-                width: 80%;
-                height: 80%;
+                width: 100%;
+                height: 100%;
                 color: black;
                 cursor: pointer;
                 user-select: none;
                 writing-mode: tb-rl;
                 background-image: url('/assets/images/shogi.svg');
                 background-repeat: no-repeat;
-                background-size: contain;
+                background-size: 70%;
                 background-position: center center;
                 font-size: 1.2rem;
+                text-rendering: optimizeLegibility;
 
                 @apply --layout-vertical;
                 @apply --layout-center-center;
@@ -26,10 +27,6 @@
             :host([side="white"]) {
                 transform: rotateX(190deg);
                 background-image: url('/assets/images/shogi-white.svg');
-            }
-
-            :host([side="black"]) {
-                /*transform: rotateX(190deg);*/
             }
             
         </style>

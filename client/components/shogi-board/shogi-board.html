@@ -1,4 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
 <link rel="import" href="../config/config.html">
 <link rel="import" href="../shogi-piece/shogi-piece.html">
 <link rel="import" href="../shogi-pieces/shogi-knight.html">
@@ -34,10 +35,10 @@
             }
 
             #board {
-                width: 700px;
-                height: 700px;
-                border: 2px solid black;
-                border-radius: 0 10px 0 10px;
+                width: calc(100vmin - 64px);
+                height: calc(100vmin - 64px);
+                border-left: 5px solid black;
+                border-right: 5px solid black;
                 overflow: hidden;
                 position: relative;
                 @apply --layout-vertical;
@@ -49,10 +50,17 @@
                 @apply --layout-horizontal;
             }
 
+            [row]:first-child [column] { border-top: none; }
+            [row]:last-child [column] { border-bottom: none; }
+            [column]:first-child { border-left: none; }
+            [column]:last-child { border-right: none; }
+
             [column] {
                 position: relative;
                 height: 100%;
                 border: 1px solid black;
+                flex-shrink: 0;
+                flex-grow: 0;
                 @apply --layout-flex;
                 @apply --layout-vertical;
                 @apply --layout-center-center;
@@ -76,24 +84,19 @@
             }
 
             .right-koma {
-                width: 250px;
-                height: 250px;
-                border: 3px solid black;
-                border-left: none;
-                border-radius: 0 5px 5px 0;
-                @apply --layout-self-end;
+                padding-top: 24px;
+                @apply --layout-flex;
+                @apply --layout-vertical;
             }
 
             .left-koma {
-                width: 250px;
-                height: 250px;
-                border: 3px solid black;
-                border-right: none;
-                border-radius: 5px 0 0 5px;
-                @apply --layout-self-start;
+                padding-top: 24px;
+                @apply --layout-flex;
+                @apply --layout-vertical;
             }
 
             .board-container {
+                width: 100%;
                 @apply --layout-horizontal;
             }
 
@@ -110,6 +113,39 @@
                 @apply --layout-center-center;
             }
 
+            .header {
+                
+            }
+
+            .header h3 {
+                text-align: center;
+                outline: none;
+                border: none;
+                display: block;
+                margin: 0;
+                @apply --paper-font-display2;
+            }
+
+            .header span {
+                margin-top: 12px;
+                text-align: center;
+                display: block;
+                color: #333;
+                @apply --paper-font-body1;
+            }
+
+            .captured-container {
+                padding: 48px;
+                @apply --layout-horizontal;
+                @apply --layout-wrap;
+            }
+
+            [captured-column] {
+                @apply --layout-horizontal;
+                width: 80px;
+                height: 80px;
+            }
+
             [marker]::after { content: ''; position: absolute; width: 10px; height: 10px; border-radius: 50%; background: black; z-index: 500;  }
             [marker-top-left]::after {  top: 0; left: 0; transform: translate(-50%, -50%);  }
             [marker-top-right]::after  { top: 0; right: 0; transform: translate(50%, -50%); }
@@ -118,9 +154,21 @@
         </style>
 
         <div class="board-container">
-            <div class="left-koma"></div>
+            <div class="left-koma" id="whiteCaptured">
+                <div class="header">
+                    <h3>White</h3>
+                    <span>[[whiteCapturedCount]] Pieces Captured</span>
+                </div>
+                <div id="whiteBoard" class="captured-container"></div>
+            </div>
             <div id="board"></div>
-            <div class="right-koma"></div>
+            <div class="right-koma" id="blackCaptured">
+                <div class="header">
+                    <h3>Black</h3>
+                    <span>[[blackCapturedCount]] Pieces Captured</span>
+                </div>
+                <div id="blackBoard" class="captured-container"></div>
+            </div>
         </div>
 
     </template>

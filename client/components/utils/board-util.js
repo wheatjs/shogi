@@ -60,8 +60,6 @@ class BoardUtil {
     }
 
     static promotePiece(piece, board, lexicon, y) {
-        console.log('Before', piece);
-
         if (BoardUtil.isBlackPiece(piece, lexicon) && y <= 2 && BoardUtil.lexiconPieceLookup(piece, lexicon).hasOwnProperty('promote'))
             return BoardUtil.lexiconPieceLookup(piece, lexicon).promote;
         

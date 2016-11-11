@@ -5,12 +5,30 @@
     class ShogiBoard extends Polymer.Element {
 
         static get is() { return 'shogi-board'; }
+        static get config() {
+            return {
+                properties: {
+                    whiteCapturedCount: {
+                        type: Number,
+                        value: 0
+                    },
 
+                    blackCapturedCount: {
+                        type: Number,
+                        value: 0
+                    }
+                }
+            }
+        }
+        
         constructor() {
             super();
 
             this.virtualBoard = BoardConfiguration;
             this.physicalBoard = PhysicalBoardConfiguration;
+
+            this.blackCaptured = [];
+            this.whiteCaptured = [];
 
             this.turn = 'black';
         }
@@ -18,7 +36,7 @@
         connectedCallback() {
             super.connectedCallback();
 
-            this.placeSound = new Audio('/assets/audio/shogi-piece.mp3');
+            this.placeSound = new Audio(this.physicalBoard.sounds.place);
             this.drawBoard();
         }
 
@@ -105,6 +123,8 @@
             let origin = e.target;
             let moves = origin.possibleMoves(parseInt(e.target.getAttribute('y')), parseInt(e.target.getAttribute('x')), this.virtualBoard.board, this.virtualBoard.lexicon);
 
+            origin.parentNode.setAttribute('highlight', '');
+
             for (let i = 0; i < moves.length; i++) {
                 if (PhysicalBoard.getColumn(moves[i].y, moves[i].x, this.$.board).querySelectorAll('[target]').length <= 0) {
                     let target = PhysicalBoard.createElementWithAttributes('div', ['target']);
@@ -132,12 +152,65 @@
 
             BoardUtil.setBoardPiece(currentPiece, this.virtualBoard.board, target.y, target.x);
             BoardUtil.setBoardPiece(0, this.virtualBoard.board, current.y, current.x);
+            
+            if (this.turn === 'black' && targetPiece !== 0 && targetPiece !== 2)
+                this.blackCaptured.push(this.virtualBoard.lexicon[targetPiece].capture);
+            
+            if (this.turn === 'white' && targetPiece !== 0 && targetPiece !== 1) 
+                this.whiteCaptured.push(this.virtualBoard.lexicon[targetPiece].capture);
 
             this.turn = this.turn === 'white' ? 'black' : 'white';
 
+            this.placeSound.play();
+            this.renderCaptured();
             this.clearBoardHighlights();
             this.clearBoardTargets();
             this.drawPieces();
+
+        }
+
+        clearCapturedContainers() {
+            let nodes = this.$.blackBoard.querySelectorAll('[captured-column]');
+
+            for (let i = 0; i < nodes.length; i++)
+                nodes[i].parentNode.removeChild(nodes[i]);
+            
+            nodes = this.$.whiteBoard.querySelectorAll('[captured-column]');
+
+            for (let i = 0; i < nodes.length; i++)
+                nodes[i].parentNode.removeChild(nodes[i]);
+
+        }
+
+        renderCaptured() {
+            this.clearCapturedContainers();
+
+            this.blackCapturedCount = this.blackCaptured.length;
+            this.whiteCapturedCount = this.whiteCaptured.length;
+
+            for (let i = 0; i < this.blackCaptured.length; i++) {
+                let piece = this.virtualBoard.lexicon[this.blackCaptured[i]];
+
+                let physicalPiece =
+                        PhysicalBoard.createElementWithAttributes(piece.tag, [{ side: piece.side }]);
+
+                let column = PhysicalBoard.createElementWithAttributes('div', ['captured-column']);
+                column.appendChild(physicalPiece);
+
+                this.$.blackBoard.appendChild(column);
+            }
+
+            for (let i = 0; i < this.whiteCaptured.length; i++) {
+                let piece = this.virtualBoard.lexicon[this.whiteCaptured[i]];
+
+                let physicalPiece =
+                        PhysicalBoard.createElementWithAttributes(piece.tag, [{ side: piece.side }]);
+
+                let column = PhysicalBoard.createElementWithAttributes('div', ['captured-column']);
+                column.appendChild(physicalPiece);
+
+                this.$.whiteBoard.appendChild(column);
+            }
 
         }
 
